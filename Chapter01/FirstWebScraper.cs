@@ -5,7 +5,7 @@ using AngleSharp.Parser.Html;
 
 namespace WebScrapingWithDotNetCore.Chapter01
 {
-    public class MakeWebRequest
+    public class FirstWebScraper
     {
         public static async Task<string> SendRequestWithHttpClientAsync()
         {
@@ -50,17 +50,17 @@ namespace WebScrapingWithDotNetCore.Chapter01
             var document = await parser.ParseAsync(htmlSourceCode);
 
             var nonExistTag = document.QuerySelector("h8");
-            System.Console.WriteLine(nonExistTag);
-            System.Console.WriteLine($"nonExistTag is null: {nonExistTag is null}");
+            Console.WriteLine(nonExistTag);
+            Console.WriteLine($"nonExistTag is null: {nonExistTag is null}");
 
             try
             {
-                System.Console.WriteLine(nonExistTag.QuerySelector("p").OuterHtml);
+                Console.WriteLine(nonExistTag.QuerySelector("p").OuterHtml);
             }
             catch (NullReferenceException)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                System.Console.WriteLine("Tag was not found");
+                Console.WriteLine("Tag was not found");
             }
         }
 

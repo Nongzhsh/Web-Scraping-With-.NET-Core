@@ -9,7 +9,7 @@ using AngleSharp.Parser.Html;
 
 namespace WebScrapingWithDotNetCore.Chapter02
 {
-    public class ParseComplexHtml
+    public class AdvancedHtmlParsing
     {
         public static async Task<string> GetHtmlSourceCodeAsync(string uri)
         {
@@ -106,19 +106,22 @@ namespace WebScrapingWithDotNetCore.Chapter02
                 Console.WriteLine("Table's descendants are:");
                 foreach (var item in descendants)
                 {
-                    System.Console.WriteLine(item.LocalName);
+                    Console.WriteLine(item.LocalName);
                 }
 
                 var siblings = document.QuerySelectorAll("table#giftList > tbody > tr").Select(x => x.NextElementSibling);
                 Console.WriteLine("Table's descendants are:");
                 foreach (var item in siblings)
                 {
-                    System.Console.WriteLine(item?.LocalName);
+                    Console.WriteLine(item?.LocalName);
                 }
 
                 var parentSibling = document.All.SingleOrDefault(x => x.HasAttribute("src") && x.GetAttribute("src") == "../img/gifts/img1.jpg")
-                    .ParentElement.PreviousElementSibling;
-                Console.WriteLine($"Parent's previous sibling is: {parentSibling.TextContent}");
+                    ?.ParentElement.PreviousElementSibling;
+                if (parentSibling != null)
+                {
+                    Console.WriteLine($"Parent's previous sibling is: {parentSibling.TextContent}");
+                }
             }
             else
             {
@@ -136,19 +139,19 @@ namespace WebScrapingWithDotNetCore.Chapter02
                 var document = await parser.ParseAsync(html);
 
                 var images = document.QuerySelectorAll("img")
-                    .Where(x => x.HasAttribute("src") && Regex.Match(x.Attributes["src"]?.Value, @"\.\.\/img\/gifts/img.*\.jpg").Success);
+                    .Where(x => x.HasAttribute("src") && Regex.Match(x.Attributes["src"].Value, @"\.\.\/img\/gifts/img.*\.jpg").Success);
                 foreach (var item in images)
                 {
-                    System.Console.WriteLine(item.Attributes["src"]?.Value);
+                    Console.WriteLine(item.Attributes["src"]?.Value);
                 }
 
                 var elementsWith2Attributes = document.All.Where(x => x.Attributes.Length == 2);
                 foreach (var item in elementsWith2Attributes)
                 {
-                    System.Console.WriteLine(item.LocalName);
+                    Console.WriteLine(item.LocalName);
                     foreach (var attr in item.Attributes)
                     {
-                        System.Console.WriteLine($"\t{attr.Name} - {attr.Value}");
+                        Console.WriteLine($"\t{attr.Name} - {attr.Value}");
                     }
                 }
             }

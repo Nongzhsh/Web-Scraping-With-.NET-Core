@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using WebScrapingWithDotNetCore.Chapter01;
-using WebScrapingWithDotNetCore.Chapter02;
+using WebScrapingWithDotNetCore.Chapter03;
 
 namespace WebScrapingWithDotNetCore
 {
@@ -9,7 +8,7 @@ namespace WebScrapingWithDotNetCore
     {
         static void Main(string[] args)
         {
-            Task.Run(async () =>
+            var task = Task.Run(async () =>
             {
                 #region Chapter 01                
                 // await MakeWebRequest.SendRequestWithHttpClientAsync();
@@ -23,10 +22,38 @@ namespace WebScrapingWithDotNetCore
                 // await ParseComplexHtml.FindGreenClassAsync();
                 // await ParseComplexHtml.FindByAttributeAsync();
                 // await ParseComplexHtml.FindDescendantAsync();
-                await ParseComplexHtml.FindByRegexAsync();
+                // await AdvancedHtmlParsing.FindByRegexAsync();
                 #endregion
 
-            }).GetAwaiter().GetResult();
+                #region Chapter 03
+
+                // await StartingToCrawl.TraversingASingleDomainAsync();
+                // await StartingToCrawl.FindSpecificLinksAsync();
+                // await StartingToCrawl.GetRandomNestedLinksAsync();
+                // await StartingToCrawl.GetUniqueLinksAsync();
+                // await StartingToCrawl.GetLinksWithInfoAsync();
+                // await CrawlingAcrossInternet.FollowExternalOnlyAsync("http://oreilly.com");
+                await CrawlingAcrossInternet.GetAllExternalLinksAsync("https://v.qq.com/");
+
+                #endregion
+
+            });
+
+            try
+            {
+                task.Wait();
+            }
+            catch (AggregateException aex)
+            {
+                if (aex.InnerException is NullReferenceException)
+                    Console.WriteLine("Null!");
+                else
+                    throw;
+            }
+            finally
+            {
+                Console.ReadKey();
+            }
         }
     }
 }
