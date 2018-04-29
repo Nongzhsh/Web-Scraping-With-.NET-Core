@@ -48,6 +48,7 @@ namespace WebScrapingWithDotNetCore
             }
             catch (AggregateException aex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 if (aex.InnerException is NullReferenceException)
                 {
                     Console.WriteLine("Null!");
@@ -58,11 +59,9 @@ namespace WebScrapingWithDotNetCore
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(aex.Message);
-                    Console.WriteLine(aex.InnerException.Message);
-                    return -1;
                 }
+                return -1;
             }
             finally
             {
