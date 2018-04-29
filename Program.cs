@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using WebScrapingWithDotNetCore.Chapter01;
 using WebScrapingWithDotNetCore.Chapter02;
@@ -8,7 +9,7 @@ namespace WebScrapingWithDotNetCore
 {
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             var task = Task.Run(async () =>
             {
@@ -48,14 +49,26 @@ namespace WebScrapingWithDotNetCore
             catch (AggregateException aex)
             {
                 if (aex.InnerException is NullReferenceException)
+                {
                     Console.WriteLine("Null!");
+                }
+                else if (aex.InnerException is HttpRequestException)
+                {
+                    Console.WriteLine("Request Errors!");
+                }
                 else
-                    throw;
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(aex.Message);
+                    Console.WriteLine(aex.InnerException.Message);
+                    return -1;
+                }
             }
             finally
             {
                 Console.ReadKey();
             }
+            return 0;
         }
     }
 }
