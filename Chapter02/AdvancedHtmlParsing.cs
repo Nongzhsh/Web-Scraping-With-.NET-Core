@@ -35,7 +35,7 @@ namespace WebScrapingWithDotNetCore.Chapter02
             {
                 var parser = new HtmlParser();
                 var document = await parser.ParseAsync(html);
-                var nameList = document.QuerySelectorAll("span .green");
+                var nameList = document.QuerySelectorAll("span > .green");
 
                 Console.WriteLine("Green names are:");
                 Console.ForegroundColor = ConsoleColor.Green;
@@ -110,7 +110,7 @@ namespace WebScrapingWithDotNetCore.Chapter02
                 }
 
                 var siblings = document.QuerySelectorAll("table#giftList > tbody > tr").Select(x => x.NextElementSibling);
-                Console.WriteLine("Table's descendants are:");
+                Console.WriteLine("Table's next siblings are:");
                 foreach (var item in siblings)
                 {
                     Console.WriteLine(item?.LocalName);
@@ -142,7 +142,7 @@ namespace WebScrapingWithDotNetCore.Chapter02
                     .Where(x => x.HasAttribute("src") && Regex.Match(x.Attributes["src"].Value, @"\.\.\/img\/gifts/img.*\.jpg").Success);
                 foreach (var item in images)
                 {
-                    Console.WriteLine(item.Attributes["src"]?.Value);
+                    Console.WriteLine(item.Attributes["src"].Value);
                 }
 
                 var elementsWith2Attributes = document.All.Where(x => x.Attributes.Length == 2);

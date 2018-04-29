@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using WebScrapingWithDotNetCore.Chapter01;
+using WebScrapingWithDotNetCore.Chapter02;
 using WebScrapingWithDotNetCore.Chapter03;
 
 namespace WebScrapingWithDotNetCore
@@ -11,17 +13,17 @@ namespace WebScrapingWithDotNetCore
             var task = Task.Run(async () =>
             {
                 #region Chapter 01                
-                // await MakeWebRequest.SendRequestWithHttpClientAsync();
-                // await MakeWebRequest.ReadWithAngleSharpAsync();
-                // await MakeWebRequest.ResponseWithErrorsAsync();
-                // await MakeWebRequest.ReadNonExistTagAsync();
-                // await MakeWebRequest.RunAllAsync();
+                // await FirstWebScraper.SendRequestWithHttpClientAsync();
+                // await FirstWebScraper.ReadWithAngleSharpAsync();
+                // await FirstWebScraper.ResponseWithErrorsAsync();
+                // await FirstWebScraper.ReadNonExistTagAsync();
+                // await FirstWebScraper.RunAllAsync();
                 #endregion
 
                 #region Chapter 02
-                // await ParseComplexHtml.FindGreenClassAsync();
-                // await ParseComplexHtml.FindByAttributeAsync();
-                // await ParseComplexHtml.FindDescendantAsync();
+                // await AdvancedHtmlParsing.FindGreenClassAsync();
+                // await AdvancedHtmlParsing.FindByAttributeAsync();
+                // await AdvancedHtmlParsing.FindDescendantAsync();
                 // await AdvancedHtmlParsing.FindByRegexAsync();
                 #endregion
 
@@ -33,7 +35,7 @@ namespace WebScrapingWithDotNetCore
                 // await StartingToCrawl.GetUniqueLinksAsync();
                 // await StartingToCrawl.GetLinksWithInfoAsync();
                 // await CrawlingAcrossInternet.FollowExternalOnlyAsync("http://oreilly.com");
-                await CrawlingAcrossInternet.GetAllExternalLinksAsync("https://v.qq.com/");
+                await CrawlingAcrossInternet.GetAllExternalLinksAsync("http://oreilly.com");
 
                 #endregion
 

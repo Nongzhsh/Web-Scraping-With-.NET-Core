@@ -11,6 +11,10 @@ namespace WebScrapingWithDotNetCore.Chapter03
     public class CrawlingAcrossInternet
     {
         private static readonly Random Random = new Random();
+        private static readonly HttpClient HttpClient = new HttpClient();
+        private static readonly HashSet<string> InternalLinks = new HashSet<string>();
+        private static readonly HashSet<string> ExternalLinks = new HashSet<string>();
+        private static readonly HtmlParser Parser = new HtmlParser();
 
         public static async Task FollowExternalOnlyAsync(string startingSite)
         {
@@ -28,10 +32,9 @@ namespace WebScrapingWithDotNetCore.Chapter03
 
         private static async Task<string> GetRandomExternalLinkAsync(string startingPage)
         {
-            var httpClient = new HttpClient();
             try
             {
-                var htmlSource = await httpClient.GetStringAsync(startingPage);
+                var htmlSource = await HttpClient.GetStringAsync(startingPage);
                 var externalLinks = (await GetExternalLinksAsync(htmlSource, SplitAddress(startingPage)[0])).ToList();
                 if (externalLinks.Any())
                 {
@@ -61,66 +64,62 @@ namespace WebScrapingWithDotNetCore.Chapter03
 
         private static async Task<IEnumerable<string>> GetInternalLinksAsync(string htmlSource, string includeUrl)
         {
-            var internalLinks = new HashSet<string>();
-            var parser = new HtmlParser();
-            var document = await parser.ParseAsync(htmlSource);
+            var document = await Parser.ParseAsync(htmlSource);
             var links = document.QuerySelectorAll("a")
                 .Where(x => x.HasAttribute("href") && Regex.Match(x.Attributes["href"].Value, $@"^(/|.*{includeUrl})").Success)
                 .Select(x => x.Attributes["href"].Value);
             foreach (var link in links)
             {
-                if (!string.IsNullOrEmpty(link) && !internalLinks.Contains(link))
+                if (!string.IsNullOrEmpty(link) && !InternalLinks.Contains(link))
                 {
-                    internalLinks.Add(link);
+                    InternalLinks.Add(link);
                 }
             }
-            return internalLinks;
+            return InternalLinks;
         }
 
         private static async Task<IEnumerable<string>> GetExternalLinksAsync(string htmlSource, string excludeUrl)
         {
-            var externalLinks = new HashSet<string>();
-            var parser = new HtmlParser();
-            var document = await parser.ParseAsync(htmlSource);
+            var document = await Parser.ParseAsync(htmlSource);
 
             var links = document.QuerySelectorAll("a")
                 .Where(x => x.HasAttribute("href") && Regex.Match(x.Attributes["href"].Value, $@"^(http|www)((?!{excludeUrl}).)*$").Success)
                 .Select(x => x.Attributes["href"].Value);
             foreach (var link in links)
             {
-                if (!string.IsNullOrEmpty(link) && !externalLinks.Contains(link))
+                if (!string.IsNullOrEmpty(link) && !ExternalLinks.Contains(link))
                 {
-                    externalLinks.Add(link);
+                    ExternalLinks.Add(link);
                 }
             }
-            return externalLinks;
+            return ExternalLinks;
         }
+
+        private static readonly HashSet<string> AllExternalLinks = new HashSet<string>();
+        private static readonly HashSet<string> AllInternalLinks = new HashSet<string>();
 
         public static async Task GetAllExternalLinksAsync(string siteUrl)
         {
-            var httpClient = new HttpClient();
-            var allExternalLinks = new HashSet<string>();
-            var allInternalLinks = new HashSet<string>();
             try
             {
-                var htmlSource = await httpClient.GetStringAsync(siteUrl);
+                var htmlSource = await HttpClient.GetStringAsync(siteUrl);
                 var internalLinks = await GetInternalLinksAsync(htmlSource, SplitAddress(siteUrl)[0]);
                 var externalLinks = await GetExternalLinksAsync(htmlSource, SplitAddress(siteUrl)[0]);
                 foreach (var link in externalLinks)
                 {
-                    if (!allExternalLinks.Contains(link))
+                    if (!AllExternalLinks.Contains(link))
                     {
-                        allExternalLinks.Add(link);
+                        AllExternalLinks.Add(link);
                         Console.WriteLine(link);
                     }
                 }
 
                 foreach (var link in internalLinks)
                 {
-                    if (!allInternalLinks.Contains(link))
+                    if (!AllInternalLinks.Contains(link))
                     {
                         Console.WriteLine($"The link is: {link}");
-                        allInternalLinks.Add(link);
+                        AllInternalLinks.Add(link);
                         await GetAllExternalLinksAsync(link);
                     }
                 }

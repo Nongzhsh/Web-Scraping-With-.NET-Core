@@ -64,26 +64,25 @@ namespace WebScrapingWithDotNetCore.Chapter03
             }
         }
 
+        private static readonly HashSet<string> LinkSet = new HashSet<string>();
+        private static readonly HttpClient HttpClient = new HttpClient();
+        private static readonly HtmlParser Parser = new HtmlParser();
+
         public static async Task GetUniqueLinksAsync(string uri = "")
         {
-            var linkSet = new HashSet<string>();
-
-            var httpClient = new HttpClient();
-            var htmlSource = await httpClient.GetStringAsync($"http://en.wikipedia.org{uri}");
-
-            var parser = new HtmlParser();
-            var document = await parser.ParseAsync(htmlSource);
+            var htmlSource = await HttpClient.GetStringAsync($"http://en.wikipedia.org{uri}");
+            var document = await Parser.ParseAsync(htmlSource);
 
             var links = document.QuerySelectorAll("a")
                 .Where(x => x.HasAttribute("href") && Regex.Match(x.Attributes["href"].Value, @"^(/wiki/)").Success);
 
             foreach (var link in links)
             {
-                if (!linkSet.Contains(link.Attributes["href"].Value))
+                if (!LinkSet.Contains(link.Attributes["href"].Value))
                 {
                     var newPage = link.Attributes["href"].Value;
                     Console.WriteLine(newPage);
-                    linkSet.Add(newPage);
+                    LinkSet.Add(newPage);
                     await GetUniqueLinksAsync(newPage);
                 }
             }
@@ -91,13 +90,8 @@ namespace WebScrapingWithDotNetCore.Chapter03
 
         public static async Task GetLinksWithInfoAsync(string uri = "")
         {
-            var linkSet = new HashSet<string>();
-
-            var httpClient = new HttpClient();
-            var htmlSource = await httpClient.GetStringAsync($"http://en.wikipedia.org{uri}");
-
-            var parser = new HtmlParser();
-            var document = await parser.ParseAsync(htmlSource);
+            var htmlSource = await HttpClient.GetStringAsync($"http://en.wikipedia.org{uri}");
+            var document = await Parser.ParseAsync(htmlSource);
 
             try
             {
@@ -124,11 +118,11 @@ namespace WebScrapingWithDotNetCore.Chapter03
                 .Where(x => x.HasAttribute("href") && Regex.Match(x.Attributes["href"].Value, @"^(/wiki/)").Success).ToList();
             foreach (var link in links)
             {
-                if (!linkSet.Contains(link.Attributes["href"].Value))
+                if (!LinkSet.Contains(link.Attributes["href"].Value))
                 {
                     var newPage = link.Attributes["href"].Value;
                     Console.WriteLine(newPage);
-                    linkSet.Add(newPage);
+                    LinkSet.Add(newPage);
                     await GetLinksWithInfoAsync(newPage);
                 }
             }
